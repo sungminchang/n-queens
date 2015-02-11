@@ -141,10 +141,10 @@
       var sum = 0;
 
       for(var i = 0; i < boundary;i++){
-        // Get the row that I am at
         if(initCol >= boundary)
           break;
 
+        // Get the row that I am at
         var row = this.get(i);
         if(row[initCol] === 1)
           sum++;
@@ -158,7 +158,10 @@
     hasAnyMajorDiagonalConflicts: function() {
       var numberOfCols = this.get("n");
 
-      for (var i = 0; i < numberOfCols; i++) {
+      // The reason we add three is since we want to check all
+      // diagonals. This causes us to access indicies out of bounds,
+      // but it does not crash oddly
+      for (var i = -3; i < numberOfCols; i++) {
         if (this.hasMajorDiagonalConflictAt(i)) {
           return true;
         }
@@ -195,7 +198,10 @@
     hasAnyMinorDiagonalConflicts: function() {
       var numberOfCols = this.get("n");
 
-      for (var i = 0; i < numberOfCols; i++) {
+      // The reason we add two is since we want to check all
+      // diagonals. This causes us to access indicies out of bounds,
+      // but it does not crash oddly
+      for (var i = 0; i < numberOfCols+2; i++) {
         if (this.hasMinorDiagonalConflictAt(i)) {
           return true;
         }
