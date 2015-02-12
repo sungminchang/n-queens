@@ -27,6 +27,9 @@ window.findNRooksSolution = function(n) {
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
   var board = new Board({n:n});
+
+  var spots = [][board.get('n')] = 0;
+
   var solutionCount = rookHelper(0, board, true);
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
@@ -68,11 +71,6 @@ var rookHelper = function(numberOfRooksPlaced, board, count){
   var numberOfRows = board.get("n");
   var sum = 0;
 
-  // If the board has any conflicts, return 0
-  if(board.hasAnyRowConflicts() || board.hasAnyColConflicts()){
-    return 0;
-  }
-
   // If the # of rows === # of rooks placed, we have found a solution
   if(numberOfRows === numberOfRooksPlaced){
     return 1;
@@ -82,7 +80,15 @@ var rookHelper = function(numberOfRooksPlaced, board, count){
   for(var i = 0; i < numberOfRows; i++){
     // Since the current state of board is good, augment it
     // and pass that recursively
-    board.rows()[numberOfRooksPlaced][i] = 1;
+    board.togglePiece(numberOfRooksPlaced,i);
+
+    // If the board has any conflicts
+    if(board.hasColConflictAt(i)){
+      // Remove augmentation and proceed to next option
+    board.togglePiece(numberOfRooksPlaced,i);
+      continue;
+    }
+
     sum += rookHelper(numberOfRooksPlaced+1, board, count);
 
     // Return if we just want to find a single solution
@@ -90,7 +96,7 @@ var rookHelper = function(numberOfRooksPlaced, board, count){
       return sum;
 
     // Remove augmentation
-    board.rows()[numberOfRooksPlaced][i] = 0;
+    board.togglePiece(numberOfRooksPlaced,i);
   }
   return sum;
 }
@@ -106,8 +112,9 @@ var queenHelper = function(numberOfQueensPlaced, board, count){
   var numberOfRows = board.get("n");
   var sum = 0;
   // If the board has any conflicts, return 0
-  if(board.hasAnyRowConflicts() || board.hasAnyColConflicts()
-  || board.hasAnyMajorDiagonalConflicts() || board.hasAnyMinorDiagonalConflicts()){
+  if(board.hasAnyColConflicts() ||
+     board.hasAnyMajorDiagonalConflicts() ||
+     board.hasAnyMinorDiagonalConflicts()){
       return 0;
   }
 
@@ -120,14 +127,14 @@ var queenHelper = function(numberOfQueensPlaced, board, count){
   for(var i = 0; i < numberOfRows; i++){
     // Since the current state of board is good, augment it
     // and pass that recursively
-    board.rows()[numberOfQueensPlaced][i] = 1;
+    board.togglePiece(numberOfQueensPlaced,i);
     sum += queenHelper(numberOfQueensPlaced+1, board, count);
 
     // Return if we just want to find a single solution
     if (sum && !count)
       return sum;
 
-    board.rows()[numberOfQueensPlaced][i] = 0;
+    board.togglePiece(numberOfQueensPlaced,i);
   }
   return sum;
 }
