@@ -46,35 +46,26 @@ window.findNRooksSolution = function(n) {
   return solution;
 };
 
+window.rookHelper = function(n) {
+
+  if (board.hasAnyRowConflicts() || board.hasAnyColConflicts()) {
+    return;
+  }
+
+  if (n === -1) {
+    return 1;
+  } 
+
+return 1 + rookHelper(n-1);
+
+}
+
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var solutionCount = 0; //fixme
-  var board = new Board({n:n});
 
-  var rookHelper = function(numberOfRooksPlaced, board){
-    // Base Cases
-    var numberOfRows = board.get("n");
-    if(board.hasAnyRowConflicts() || board.hasAnyColConflicts()){
-        return;
-    }
+var board = new Board({n:4});
 
-    if(numberOfRows === numberOfRooksPlaced){
-      // Check for ConflictsnumberOfRooksPlaced-1, augmented
-      solutionCount++;
-      return;
-    }
-
-    // Loop through the current row
-    for(var i = 0; i < numberOfRows; i++){
-
-      // Current state of board is good, augment a new board
-      // and pass that recursively
-      board.rows()[numberOfRooksPlaced][i] = 1;
-      rookHelper(numberOfRooksPlaced+1, board);
-      board.rows()[numberOfRooksPlaced][i] = 0;
-    }
-  }
-  rookHelper(0, board);
+  var solutionCount = rookHelper(n).call(board);
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
 };
@@ -124,38 +115,7 @@ window.findNQueensSolution = function(n) {
 window.countNQueensSolutions = function(n) {
   var solutionCount = 0; //fixme
   var board = new Board({n:n});
-  var arrOfBoards = {};
 
-  var queenHelper = function(numberOfQueensPlaced, board){
-    // Base Cases
-    var numberOfRows = board.get("n");
-    if(board.hasAnyRowConflicts() || board.hasAnyColConflicts()
-    || board.hasAnyMajorDiagonalConflicts() || board.hasAnyMinorDiagonalConflicts()){
-        return;
-    }
-
-    if(numberOfRows === numberOfQueensPlaced){
-      var key = JSON.stringify(board.rows());
-      if(arrOfBoards[key] !== true){
-        solutionCount++;
-        arrOfBoards[key] = true;
-        return;
-      }
-      else
-        return;
-    }
-
-    // Loop through the current row
-    for(var i = 0; i < numberOfRows; i++){
-
-      // Current state of board is good, augment a new board
-      // and pass that recursively
-      board.rows()[numberOfQueensPlaced][i] = 1;
-      queenHelper(numberOfQueensPlaced+1, board);
-      board.rows()[numberOfQueensPlaced][i] = 0;
-    }
-  }
-  queenHelper(0, board);
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
