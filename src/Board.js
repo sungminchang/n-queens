@@ -161,7 +161,7 @@
       // The reason we add three is since we want to check all
       // diagonals. This causes us to access indicies out of bounds,
       // but it does not crash oddly
-      for (var i = -3; i < numberOfCols; i++) {
+      for (var i = -(numberOfCols*2); i < numberOfCols; i++) {
         if (this.hasMajorDiagonalConflictAt(i)) {
           return true;
         }
@@ -201,7 +201,7 @@
       // The reason we add two is since we want to check all
       // diagonals. This causes us to access indicies out of bounds,
       // but it does not crash oddly
-      for (var i = 0; i < numberOfCols+2; i++) {
+      for (var i = 0; i < numberOfCols*2; i++) {
         if (this.hasMinorDiagonalConflictAt(i)) {
           return true;
         }

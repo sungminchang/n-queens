@@ -31,12 +31,13 @@ window.countNRooksSolutions = function(n) {
   var rookHelper = function(numberOfRooksPlaced, board){
     // Base Cases
     var numberOfRows = board.get("n");
+    if(board.hasAnyRowConflicts() || board.hasAnyColConflicts()){
+        return;
+    }
+
     if(numberOfRows === numberOfRooksPlaced){
       // Check for ConflictsnumberOfRooksPlaced-1, augmented
-      if(!board.hasAnyRowConflicts() && !board.hasAnyColConflicts())
-      {
-        solutionCount++;
-      }
+      solutionCount++;
       return;
     }
 
@@ -67,8 +68,40 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  var solutionCount = 0; //fixme
+  var board = new Board({n:n});
+  var arrOfBoards = {};
 
+  var rookHelper = function(numberOfRooksPlaced, board){
+    // Base Cases
+    var numberOfRows = board.get("n");
+    if(board.hasAnyRowConflicts() || board.hasAnyColConflicts()
+    || board.hasAnyMajorDiagonalConflicts() || board.hasAnyMinorDiagonalConflicts()){
+        return;
+    }
+
+    if(numberOfRows === numberOfRooksPlaced){
+      var key = JSON.stringify(board.rows());
+      if(arrOfBoards[key] !== true){
+        solutionCount++;
+        arrOfBoards[key] = true;
+        return;
+      }
+      else
+        return;
+    }
+
+    // Loop through the current row
+    for(var i = 0; i < numberOfRows; i++){
+
+      // Current state of board is good, augment a new board
+      // and pass that recursively
+      board.rows()[numberOfRooksPlaced][i] = 1;
+      rookHelper(numberOfRooksPlaced+1, board);
+      board.rows()[numberOfRooksPlaced][i] = 0;
+    }
+  }
+  rookHelper(0, board);
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
